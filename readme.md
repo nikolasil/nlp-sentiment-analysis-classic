@@ -71,7 +71,7 @@ By applying `min_df=0.001` and custom preprocessing, the vocabulary was pruned t
 
 ---
 ## 🎓 Academic Context
-Developed as part of the Artificial Intelligence I course at the National and Kapodistrian University of Athens (UoA). Based on the UC Berkeley CS188 framework.
+Developed as part of the Artificial Intelligence II course at the National and Kapodistrian University of Athens (UoA). Based on the UC Berkeley CS188 framework.
 
 ## 🚦 Execution
 ```bash
@@ -80,3 +80,4 @@ pip install pandas scikit-learn nltk numpy matplotlib
 
 # Run the analysis
 python main.py
+

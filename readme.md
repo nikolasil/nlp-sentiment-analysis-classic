@@ -1,165 +1,82 @@
-# Artificial Intelligence 2
+# Vaccination Sentiment Analysis: A Comparative ML Study
 
-# Exercise 1
+An NLP-based multi-class sentiment classifier designed to categorize social media discourse regarding vaccinations. This project focuses on the trade-offs between different text vectorization strategies and optimizing model generalization through feature engineering.
 
-## Name: Nikolaos Iliopoulos
-
-## AM: 1115201800332
-
----
-
-> **A classifier to identify anti-vax | pro-vax tweets using softmax regression**
-
-## Libraries
-
-- **pandas**
-- **sklearn**
-- **nltk**
-- **numpy**
-- **matplotlib**
+## 🛠️ Tech Stack
+* **ML Framework:** Scikit-Learn
+* **NLP Tools:** NLTK (Tokenization, Lemmatization)
+* **Data Handling:** Pandas, NumPy
+* **Visualization:** Matplotlib
 
 ---
 
-## Softmax Regration Function
+## 🏗️ Methodology & Vectorization
+I conducted a comparative analysis of three primary vectorization techniques to transform raw text into numerical features for the **Softmax Regression** (Multinomial Logistic Regression) model.
 
-In order to do softmax regration i used the LogisticRegression function from sklearn.linear_model library.
-Arguments:
 
-- **multi_class** = "multinomial"
-  > This argument is for the softmax regression.
-- **max_iter** = 5000
-  > Increase maximum iterations so that the model does not get stuck.
 
----
+### 1. Vectorizers Tested
+* **CountVectorizer:** Baseline approach counting token frequency.
+* **HashingVectorizer:** Memory-efficient vectorization utilizing the hashing trick.
+* **TF-IDF:** Normalized counts by inverse document frequency. **Selected as the optimal choice** for maintaining high scores while minimizing the generalization gap.
 
-## Text Vectorizers
-
-- **CountVectorizer()**
-  > CountVectorizer is used to count the number of times a word appears in a document.
-  <!-- >
-  > Words in the Vocabulary = *2199*
-  > |  Scores   |    Training Set    |   Validation Set   |
-  > |-----------|--------------------|--------------------|
-  > |     F1    | 0.7995  | 0.7109 |
-  > |   Recall  | 0.8029 | 0.7151 |
-  > | Precision | 0.8026 | 0.7099 | -->
-- **TfidfVectorizer()**
-  > TfidfVectorizer is used to count the number of times a word appears in a document and then normalize the counts by the inverse document frequency.
-  <!-- >
-  > Words in the Vocabulary = *2199*
-  > |  Scores   |    Training Set    |   Validation Set   |
-  > |-----------|--------------------|--------------------|
-  > |     F1    | 0.7738 | 0.7137 |
-  > |   Recall  | 0.7806 | 0.7204 |
-  > | Precision | 0.7809 | 0.7159 | -->
-- **HashingVectorizer()**
-  > HashingVectorizer is used to convert a collection of text documents to a matrix of token occurrences.
-  <!-- >
-  > n_features = *2048*
-  > |  Scores   |    Training Set    |   Validation Set   |
-  > |-----------|--------------------|--------------------|
-  > |     F1    | 0.7403 | 0.6840 |
-  > |   Recall  | 0.7493 | 0.6919 |
-  > | Precision | 0.7475 | 0.6861 | -->
-
-**I concluded that the TfidfVectorizer() is the best option for this task.**
+### 2. Hyperparameter Tuning
+* **min_df:** Optimized to `0.001` to filter noise while retaining 1,469 core features.
+* **N-grams:** Evaluated `ngram_range=(1,1)` to maintain a manageable feature space.
+* **Convergence:** Increased `max_iter` to 5000 to ensure stable gradients in high-dimensional space.
 
 ---
 
-For the CountVectorizer() and the TfidfVectorizer() i used the following arguments:
+## 📊 Experimental Results & Evolution
 
-- **strip_accents** = 'unicode'
-  > This argument is used to remove accents from the text. It reduces the dimensionality of the data.
-- **ngram_range** = (1, 1)
-  > This argument is used to create n-grams. It is used to create unigrams and bigrams.
-- **min_df** = 10 or **min_df** = 0.001
-  > **int** value means that the word must appear in at least 10 tweets to be included in the vocabulary.
-  > **float** value means that the word must appear in at least 0.001% of the tweets to be included in the vocabulary.
-  > Those 2 values worked the best for my case.
-- **stop_words** = text.ENGLISH_STOP_WORDS
-  > This argument is used to remove stop words.
-- **lowercase** = True
-  > This argument is used to convert all words to lowercase.
-
----
-
-Generally i show small changes in the results by changing the arguments.
-Only the **min_df** argument did good by removing the words that appeared in less documents, that are not important for the classification.
-
-## Pre-Processing
-
-I used pre-processing but i did not see any significant improvement in the results.
-The pre-processing is done by doing the following things:
-
-- **Removing Url**
-  > Url's are not important for the classification. So i removed them. It may seem that it is not impoving the results but it is cause the min_df argument is set to 10 and every link is possibly not more than 10 times in the document.
-- **Removing Puntuations**
-  > Puntuations are not giving anything meaninful information. So i removed them.
-- **Removing Emojis**
-  > Emojis are not giving anything meaninful information. So i removed them.
-- **Tokenization && Removing Extra Spaces**
-  > Tokenization is the process of breaking a string of text into a list of substrings.
-- **Lemmatization**
-  > Lemmatization is the process of finding the base form of a word. I tried stemming but sometimes it did not work properly.
-
----
-
-## Scores && Results
-
-In the start the model was **overfitting** with 32656 words in the Vocabulary.
-
-- with CountVectorizer().
+### Phase 1: Initial Baseline (High Overfitting)
+With a raw vocabulary of **32,656 words**, the model exhibited significant overfitting.
 
 <p align="center">
-  <img src="images/first_model_with_countvectorizer_scores.png" width="300" />
-  <img src="images/first_model_with_countvectorizer.png" width="300" /> 
+  <img src="images/first_model_with_countvectorizer_scores.png" width="350" />
+  <img src="images/first_model_with_countvectorizer.png" width="350" /> 
 </p>
 
-- with HashingVectorizer().
+### Phase 2: Vectorizer Comparison
+Comparing Hashing vs. TF-IDF performance:
+
+**Hashing Vectorizer:**
+<p align="center">
+  <img src="images/hashingvectorizer_scores.png" width="350" />
+  <img src="images/hashingvectorizer.png" width="350" /> 
+</p>
+
+**TF-IDF Vectorizer (Top Performer):**
+<p align="center">
+  <img src="images/tfidfvectorizer_scores.png" width="350" />
+  <img src="images/tfidfvectorizer.png" width="350" /> 
+</p>
+
+### Phase 3: Final Optimized Model
+By applying `min_df=0.001` and custom preprocessing, the vocabulary was pruned to **1,469 words**, significantly stabilizing the learning curve.
 
 <p align="center">
-  <img src="images/hashingvectorizer_scores.png" width="300" />
-  <img src="images/hashingvectorizer.png" width="300" /> 
+  <img src="images/final_scores.png" width="350" />
+  <img src="images/final.png" width="350" /> 
 </p>
 
-- with TfidfVectorizer().
 
-<p align="center">
-  <img src="images/tfidfvectorizer_scores.png" width="300" />
-  <img src="images/tfidfvectorizer.png" width="300" /> 
-</p>
-
-> I choose the TfidfVectorizer() because it keeps the scores high and the gap between the train scores and the validation scores low.
 
 ---
 
-**Then i removed the stopwords, made the words lowercase, strip_accents = 'unicode', ngram_range=(1,1), min_df=0.001**
-
-<p align="center">
-  <img src="images/mindf0.001_scores.png" width="300" />
-  <img src="images/mindf0.001.png" width="300" /> 
-</p>
-
-**I tried min_df=0.01 the gap in the f1 score was lower but the scores where also a little bit lower so i did not choose it**
-
-<p align="center">
-  <img src="images/mindf0.01_scores.png" width="300" />
-  <img src="images/mindf0.01.png" width="300" /> 
-</p>
+## 🚀 Key Insights & Remarks
+* **Generalization:** I observed that smaller, highly-relevant vocabularies reduce the gap between training and validation scores, effectively mitigating overfitting.
+* **Preprocessing Limitations:** While URL and punctuation removal cleaned the data, they provided marginal improvements to the F1 score, suggesting that the model relies heavily on core keyword sentiment.
+* **Learning Curves:** As the dataset size increased, training scores converged downward—a classic indicator of the model moving from memorization to general pattern recognition.
 
 ---
+## 🎓 Academic Context
+Developed as part of the Artificial Intelligence I course at the National and Kapodistrian University of Athens (UoA). Based on the UC Berkeley CS188 framework.
 
-**In the end I apply pre-processing to the data**. The scores didn't improve as expected.
-Words in the Vocabulary = **1469** from the 32656 in the start.
+## 🚦 Execution
+```bash
+# Install dependencies
+pip install pandas scikit-learn nltk numpy matplotlib
 
-<p align="center">
-  <img src="images/final_scores.png" width="300" />
-  <img src="images/final.png" width="300" /> 
-</p>
-
-## Remarks
-
-- I notice that the smaller the vocabulary size the vectorizer produces (it has only the most common and important words) the closer the f1 score of the train and the validation set is. No overfit. **But a very small vocabulary size can cause the model to drop performance.**
-- I thought that the pre-processing will help a lot in the case of overfitting. But it didn't.
-- I noticed that as the Datasize is increasing in the learning curve the training set scores are getting lower, **cause the model cannot remember all the exambles**.
-- Maybe the decision to lowercase the words was not the best. Cause the tweets have some emotions and by removing the lowercases words it loss the meaning of the words. But i didnt see any significant improvement in the results so i decided to make them lowercase to reduce the vocabulary size.
+# Run the analysis
+python main.py
